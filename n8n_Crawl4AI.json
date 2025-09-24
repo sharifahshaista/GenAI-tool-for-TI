@@ -1,0 +1,544 @@
+{
+  "name": "Crawl4AI",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        656
+      ],
+      "id": "ece57a91-3409-4a84-b611-45f0debf3647",
+      "name": "When chat message received",
+      "webhookId": "830bc332-4715-4a23-a951-122e30808b3f"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are helpful AI assistant. You will answer the user query - {{ $('When chat message received').item.json.chatInput }}  using the provided context :\n{{ $json.results[0].markdown.markdown_with_citations }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        -64
+      ],
+      "id": "ccbdb7ab-d150-42d4-94ff-084fcb794684",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4.1-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        240,
+        128
+      ],
+      "id": "8216768b-e845-48cd-8572-2b6b3b6d98f1",
+      "name": "Azure OpenAI Chat Model",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "sRcuoTAt3xogKwre",
+          "name": "Azure Open AI account-mini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are helpful AI assistant. just the url from the message, nothing else: \n{{ $json.chatInput }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        -64
+      ],
+      "id": "98d3239f-8383-4a78-8672-312f8399ac99",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11235/crawl",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "urls",
+              "value": "={{ [$json.output] }}"
+            },
+            {
+              "name": "priority",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        48,
+        -64
+      ],
+      "id": "a8ef24af-378d-4b52-ad76-73fd340b9891",
+      "name": "Crawl4AI"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4.1-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        128
+      ],
+      "id": "1923e9e3-8216-462a-bd0c-21b9f653f176",
+      "name": "Azure OpenAI Chat Model1",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "sRcuoTAt3xogKwre",
+          "name": "Azure Open AI account-mini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Quick Crawl4AI Setup\n\n### Sample question\n\nHow to run a BM25 filtering based on this web source : https://docs.crawl4ai.com/core/markdown-generation/ ?\n\n",
+        "height": 640,
+        "width": 1424
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        -320
+      ],
+      "id": "c73fee8e-fd4e-4ef0-a23e-d4bf05648956",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11235/crawl",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "urls",
+              "value": "={{ [$json.chatInput] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        672
+      ],
+      "id": "2bc61495-d963-403b-b376-fe0fac874696",
+      "name": "Crawl4AI1"
+    },
+    {
+      "parameters": {
+        "content": "# Search all\n\n\n\ncanarymedia.com\n\n\n",
+        "height": 496,
+        "width": 2192
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        448
+      ],
+      "id": "c470a312-ce27-4e16-8e53-93a2a360a3f0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results[0].links.internal",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        656
+      ],
+      "id": "02a58d87-62fa-4c6d-a77c-6856686e95f3",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        80,
+        656
+      ],
+      "id": "8dbd045b-f073-461e-98e5-a192d285c68a",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "10gn35Yh6SutbCpzBuTrq7beXDsqGVVD5Pcbf92wQ3t0",
+          "mode": "list",
+          "cachedResultName": "crawl4ai-n8n-sheets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10gn35Yh6SutbCpzBuTrq7beXDsqGVVD5Pcbf92wQ3t0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10gn35Yh6SutbCpzBuTrq7beXDsqGVVD5Pcbf92wQ3t0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "={{ $json.results[0].url }}",
+            "text": "={{ $json.results[0].markdown.raw_markdown }}"
+          },
+          "matchingColumns": [
+            "url"
+          ],
+          "schema": [
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "text",
+              "displayName": "text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1024,
+        656
+      ],
+      "id": "aba20fd4-3137-4221-89ef-9611aadd097d",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "QIQ9otGNcyP8u9Ig",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11235/crawl",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "urls",
+              "value": "={{ [$json.href] }}"
+            },
+            {
+              "name": "priority",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        656
+      ],
+      "id": "c74a7f7b-d1a3-4eb4-95ff-8eb36325aabf",
+      "name": "Crawl4AI (Link by link)"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4.1-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        624,
+        784
+      ],
+      "id": "e06b656b-b76d-4e39-82f0-32f3bf5c5538",
+      "name": "Azure OpenAI Chat Model2",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "sRcuoTAt3xogKwre",
+          "name": "Azure Open AI account-mini"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9c5143df-4b6c-4fb9-936c-3f5a0ae79a82",
+              "name": "url",
+              "value": "={{ $json.results[0].url }}",
+              "type": "string"
+            },
+            {
+              "id": "35115ed1-96d4-4642-8b66-b9487be9b97c",
+              "name": "markdown",
+              "value": "={{ $json.results[0].markdown }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        560
+      ],
+      "id": "f7e81507-e6d1-4c63-9118-1975d42edc76",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Extract all news headlink,link and description only from the context below :\n\n{{ $json.markdown }}",
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        544
+      ],
+      "id": "6ca92a12-61cf-46d4-9bef-f06fd2eeefec",
+      "name": "AI Agent-News_Extractor"
+    },
+    {
+      "parameters": {
+        "model": "qwen2.5vl:32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        816,
+        848
+      ],
+      "id": "f261b209-6bbc-4c5d-b0d7-1f62f6f0b230",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "DTBdRVvdY2qgydgi",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Crawl4AI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl4AI": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Crawl4AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl4AI1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Crawl4AI (Link by link)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawl4AI (Link by link)": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Azure OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent-News_Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent-News_Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent-News_Extractor": {
+      "main": [
+        []
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent-News_Extractor",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0e018f65-7b58-41c7-bb32-2286a8928c04",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a6cc3f5403dac967b34b2f7874b361c089a2fc47f47810a90bf08b698f9dbaa"
+  },
+  "id": "hjQ654SJ5rArBA55",
+  "tags": []
+}
