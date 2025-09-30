@@ -1,0 +1,2527 @@
+{
+  "name": "News-aggregators (via sitemaps)",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w",
+          "mode": "list",
+          "cachedResultName": "2. Sitemaps",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Carbon Capture Magazine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "link",
+              "lookupValue": "={{ $('Loop Over Items3').item.json.loc }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        5088,
+        1840
+      ],
+      "id": "1c08eb11-e4e8-4cec-bafc-e241c716294f",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WB4WNoXsLpMD79Pz",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Bioenergy Insight\nnews articles are in this form: \n\nhttps://www.bioenergy-news.com/wp-sitemap-posts-news-1.xml",
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        2560
+      ],
+      "id": "e84c41d2-0f6e-4c9f-b25a-c5067051bba4",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        6720,
+        2480
+      ],
+      "id": "31c27139-1574-4850-b9cf-48cd996fc0b3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d6c5ac86-6d67-42fb-96ec-9826caf452e2",
+              "name": "sitemapUrl",
+              "type": "string",
+              "value": "https://www.bioenergy-news.com/wp-sitemap.xml"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3020b821-ec96-4c44-9b46-bf5b741beff7",
+      "name": "Set sitemap URL1",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2480,
+        2336
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "sitemapindex.sitemap",
+        "options": {}
+      },
+      "id": "cc6ab5dd-35d5-4094-8d0f-e468fe5349be",
+      "name": "Split Out1",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        3056,
+        2352
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.sitemapUrl }}",
+        "options": {}
+      },
+      "id": "368a1e62-e6b7-4984-86d5-d2fb88374fe5",
+      "name": "Get Sitemap1",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2704,
+        2352
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "options": {
+          "ignoreAttrs": true,
+          "mergeAttrs": true,
+          "normalize": true,
+          "normalizeTags": true,
+          "trim": true
+        }
+      },
+      "id": "a886e478-7146-4b08-b367-64f0b0133be6",
+      "name": "Convert Sitemap to JSON1",
+      "type": "n8n-nodes-base.xml",
+      "position": [
+        2880,
+        2352
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "0bf8e98c-b6c5-4129-852c-0d3e63f32f9f",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "posts-news"
+            },
+            {
+              "id": "2384e836-6726-4f68-9868-447b73763f9d",
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "posts-news-1",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "fa966e81-86ac-4ff7-83f4-0d37a88b1f59",
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "posts-news-2",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "5a1c4f2d-5b0b-42ca-b1b5-e709436336e6",
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "posts-news-3",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "fed949ad-76bc-48f9-b766-7a27276f1dc7",
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "posts-news-4",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d861dbe8-d8db-4f41-99a7-7645bb888473",
+      "name": "Filter URLs1",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        3248,
+        2352
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "**Create your filter here.**",
+        "height": 240,
+        "width": 150,
+        "color": 6
+      },
+      "id": "2fd99fe1-21dd-4516-9264-ad683486c0ad",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3216,
+        2272
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Fetch and process the sitemap.xml file\nThis part fetches and process the sitemap.xml file from XML data to JSON that we can work with.",
+        "height": 300,
+        "width": 540,
+        "color": 7
+      },
+      "id": "8a6af6f7-38a1-4f9f-a443-556b5275c89b",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2656,
+        2240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4400,
+        2352
+      ],
+      "id": "7a79b180-e65f-4f84-9b0a-9ff99bf92a2c",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Loop Over Items1').item.json.loc }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4928,
+        2336
+      ],
+      "id": "55e8358c-13c5-454d-ad1d-28a5b3cd5664",
+      "name": "HTTP Request1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": "h1"
+            },
+            {
+              "key": "pubDate",
+              "cssSelector": "header > time",
+              "returnValue": "attribute",
+              "attribute": "datetime"
+            },
+            {
+              "key": "content",
+              "cssSelector": "#main > article > div > div.news_content",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        5184,
+        2320
+      ],
+      "id": "e1a37190-e00e-4d14-b6d9-ca82e0db4a57",
+      "name": "HTML1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f2fe5727-5ae3-40fe-86c5-e2ad6288303b",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $item(\"0\").$node[\"Get row(s) in sheet3\"].json }}",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "986a1309-79f5-48e2-be1b-a3baa455c82f",
+      "name": "Check If Article Exists1",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        5968,
+        2368
+      ],
+      "notesInFlow": true,
+      "typeVersion": 2.2,
+      "notes": "We check if the object is empty"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w",
+          "mode": "list",
+          "cachedResultName": "2. Sitemaps",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1131404488,
+          "mode": "list",
+          "cachedResultName": "Bioenergy Insight",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit#gid=1131404488"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pubDate": "={{ $('HTML1').item.json.pubDate }}",
+            "source": "Bioenergy Insight News",
+            "title": "={{ $('HTML1').item.json.title }}",
+            "link": "={{ $('Loop Over Items1').item.json.loc }}",
+            "categories": "=",
+            "content snippet": "=",
+            "content ": "={{ $('Code').item.json.cleaned }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "pubDate",
+              "displayName": "pubDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "categories",
+              "displayName": "categories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content snippet",
+              "displayName": "content snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content ",
+              "displayName": "content ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        6496,
+        2384
+      ],
+      "id": "aba19579-d17f-4feb-b30a-97d12f2ccfe0",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WB4WNoXsLpMD79Pz",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        3664,
+        2352
+      ],
+      "id": "26f2d038-19c5-4f78-97e9-a2732ec9b684",
+      "name": "XML"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urlset.url",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        3872,
+        2352
+      ],
+      "id": "874e7ffb-d5b8-4eb5-96fd-e2e44d764864",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "content": "**Create date filter here.**",
+        "height": 240,
+        "width": 150,
+        "color": 6
+      },
+      "id": "27299b0e-c63e-483a-9f9f-b3bcc9e50516",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4048,
+        2272
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aa7b19c8-0a36-43f1-93bc-870ac20d2eee",
+              "leftValue": "={{ $json.lastmod }}",
+              "rightValue": "2025-06-15T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        4080,
+        2352
+      ],
+      "id": "1c3db11f-2804-4396-ab84-b5c8ddadf37a",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4656,
+        2368
+      ],
+      "id": "0397e8ae-9d0e-487b-8ba7-b467474d67a2",
+      "name": "Wait",
+      "webhookId": "288174a4-4232-4242-9269-7dae1f82c9de"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.loc }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3456,
+        2352
+      ],
+      "id": "592e71f2-6a81-42ac-ba4c-5854bec2c9bd",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "content": "## Fetch and process the news-related sitemap.xml file\n",
+        "height": 300,
+        "width": 540,
+        "color": 7
+      },
+      "id": "90ddd4f6-24c6-4e5c-b0be-4f0dc7cc151e",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3440,
+        2240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputArray = $input.first().json.content;\n\n// Join array elements into one string (with spaces between)\nconst input = inputArray.join(\" \");\n\n// Replace newlines followed by optional spaces with a single space\n// Collapse multiple spaces into one\nconst cleaned = input\n  .replace(/\\n\\s*/g, \" \")   // merge wrapped lines into a single line\n  .replace(/\\s{2,}/g, \" \")  // collapse double spaces\n  .trim();\n\nreturn [{ json: { cleaned } }];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5472,
+        2352
+      ],
+      "id": "23eb06c3-20ba-46e8-b53f-77538408bd5c",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputArray = $input.first().json.content;\n\n// Join all array elements into one string (with spaces between)\nconst input = inputArray.join(\" \");\n\n// Clean the string\nconst cleaned = input\n  .replace(/\\n\\s*/g, \" \")   // remove line breaks and surrounding spaces\n  .replace(/\\s{2,}/g, \" \")  // collapse multiple spaces\n  .trim();\n\n// Return as a single field\nreturn [{ json: { cleaned } }];\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5792,
+        2816
+      ],
+      "id": "c4387ada-ae4f-4cb2-ad5a-edf192ac13b9",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dcf984a5-d85b-47f3-a9da-d1759590fe38",
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "section-articles",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3376,
+        2816
+      ],
+      "id": "6fa94592-98d2-4af8-a0d9-853e979c984e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        6768,
+        2816
+      ],
+      "id": "d69ab3dc-d91d-471a-9284-bbb5b9c1952a",
+      "name": "Wait2",
+      "webhookId": "c2189783-11d4-4c41-8ceb-de75680cb6f4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d2738533-58e8-450a-a458-d22f42c2da26",
+              "leftValue": "={{ $('HTML2').item.json.pubDate }}",
+              "rightValue": "2025-06-15T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        6000,
+        2816
+      ],
+      "id": "f6059051-a523-4c3c-8c72-b851cb3c71f8",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me2",
+      "typeVersion": 1,
+      "position": [
+        7184,
+        2944
+      ],
+      "id": "27a8bab0-4845-40f6-8f03-b56ef4485f8b"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d6c5ac86-6d67-42fb-96ec-9826caf452e2",
+              "name": "sitemapUrl",
+              "type": "string",
+              "value": "https://www.canarymedia.com/sitemaps-1-sitemap.xml"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4907d2fb-d2ca-4d0d-b7db-11812477cf65",
+      "name": "Set sitemap URL2",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2448,
+        2800
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "sitemapindex.sitemap",
+        "options": {}
+      },
+      "id": "23f80753-9f38-4494-8395-a2d3e94fdc2e",
+      "name": "Split Out3",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        3024,
+        2816
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.sitemapUrl }}",
+        "options": {}
+      },
+      "id": "8d7cc63e-132d-47ec-975e-e55987458709",
+      "name": "Get Sitemap2",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2672,
+        2816
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "options": {
+          "ignoreAttrs": true,
+          "mergeAttrs": true,
+          "normalize": true,
+          "normalizeTags": true,
+          "trim": true
+        }
+      },
+      "id": "cbce467d-e455-4936-89df-d38dcd11237e",
+      "name": "Convert Sitemap to JSON2",
+      "type": "n8n-nodes-base.xml",
+      "position": [
+        2848,
+        2816
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "0bf8e98c-b6c5-4129-852c-0d3e63f32f9f",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "section-articles"
+            },
+            {
+              "id": "2d17e87b-5e23-4900-83b9-7142130ff04e",
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "section-newsletters",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "bbde6649-5ce3-46b1-a564-93a3ed2a646d",
+      "name": "Filter URLs2",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        3216,
+        2816
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "**Create your filter here.**",
+        "height": 240,
+        "width": 150,
+        "color": 6
+      },
+      "id": "bb7c65dc-a922-4f3a-9d57-cfdf34e3178f",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3184,
+        2736
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Fetch and process the sitemap.xml file\nThis part fetches and process the sitemap.xml file from XML data to JSON that we can work with.",
+        "height": 300,
+        "width": 540,
+        "color": 7
+      },
+      "id": "4453bb38-41cd-4701-bcbd-9cf7ce3c3872",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2624,
+        2704
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        4576,
+        2816
+      ],
+      "id": "a6acadc1-c456-42c1-94ad-b9d90f8a2506",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Loop Over Items2').item.json.loc }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5360,
+        2832
+      ],
+      "id": "63217931-8052-459a-aafe-068e180b181b",
+      "name": "HTTP Request3",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": "h1"
+            },
+            {
+              "key": "pubDate",
+              "cssSelector": "p > time",
+              "returnValue": "attribute",
+              "attribute": "datetime"
+            },
+            {
+              "key": "content",
+              "cssSelector": "#content-wrapper > main > section:nth-child(1) > div > div:nth-child(2) > div > div > div\n\n",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        5584,
+        2816
+      ],
+      "id": "0bdec06a-a43d-4743-95c5-5394dec78159",
+      "name": "HTML2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f2fe5727-5ae3-40fe-86c5-e2ad6288303b",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $item(\"0\").$node[\"Get row(s) in sheet2\"].json }}",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c0396728-418d-41a5-ab27-0f57939bfd1e",
+      "name": "Check If Article Exists2",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        6560,
+        2832
+      ],
+      "notesInFlow": true,
+      "typeVersion": 2.2,
+      "notes": "We check if the object is empty"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w",
+          "mode": "list",
+          "cachedResultName": "2. Sitemaps",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 189405097,
+          "mode": "list",
+          "cachedResultName": "Canary Media",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit#gid=189405097"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "link",
+              "lookupValue": "={{ $('Loop Over Items2').item.json.loc }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        6304,
+        2832
+      ],
+      "id": "08eca45a-c54c-4f62-8cb3-3fa186f4895c",
+      "name": "Get row(s) in sheet2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WB4WNoXsLpMD79Pz",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w",
+          "mode": "list",
+          "cachedResultName": "2. Sitemaps",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 189405097,
+          "mode": "list",
+          "cachedResultName": "Canary Media",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit#gid=189405097"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pubDate": "={{ $('HTML2').item.json.pubDate }}",
+            "title": "={{ $('HTML2').item.json.title }}",
+            "link": "={{ $('Loop Over Items2').item.json.loc }}",
+            "categories": "={{ $('Code in JavaScript1').item.json.category }}",
+            "content snippet": "=",
+            "source": "Canary Media",
+            "content": "={{ $('Code3').item.json.cleaned }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "pubDate",
+              "displayName": "pubDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "categories",
+              "displayName": "categories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content snippet",
+              "displayName": "content snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        6992,
+        2848
+      ],
+      "id": "3254f19c-6fcf-45c6-a33a-f968664e4c0c",
+      "name": "Append row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WB4WNoXsLpMD79Pz",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        3792,
+        2816
+      ],
+      "id": "acd18766-f684-4426-8c2e-1f5c28573322",
+      "name": "XML1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urlset.url",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        4144,
+        2816
+      ],
+      "id": "fe2bc494-ecec-4f19-a5c2-a0d0a0907554",
+      "name": "Split Out4"
+    },
+    {
+      "parameters": {
+        "content": "**Create date filter here.**",
+        "height": 240,
+        "width": 150,
+        "color": 6
+      },
+      "id": "0e0a8e61-0f78-46a8-a85c-f42595c49257",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4112,
+        2736
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "aa7b19c8-0a36-43f1-93bc-870ac20d2eee",
+              "leftValue": "={{ $json.lastmod }}",
+              "rightValue": "2025-06-15T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        4352,
+        2816
+      ],
+      "id": "4920218f-707c-4f3f-bc52-426233c57194",
+      "name": "Filter2"
+    },
+    {
+      "parameters": {
+        "content": "## Fetch and process the news-related sitemap.xml file\n",
+        "height": 300,
+        "width": 540,
+        "color": 7
+      },
+      "id": "4fe9c2c2-1a00-4c42-8cb9-7632db07b05f",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3504,
+        2704
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        4832,
+        2832
+      ],
+      "id": "638cc4dd-6b06-4925-8228-417821a05e8f",
+      "name": "Wait3",
+      "webhookId": "288174a4-4232-4242-9269-7dae1f82c9de"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.loc }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3584,
+        2816
+      ],
+      "id": "f6f64436-c187-4a04-8da0-3efefaf7d261",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const url = $input.first().json.loc;\n\n// Extract part between /articles/ and the next /\nconst match = url.match(/\\/articles\\/([^/]+)/);\n\nlet category = null;\n\nif (match) {\n  category = match[1]; // e.g. \"carbon-free-buildings\"\n\n  // Convert to Title Case (remove \"-\" and capitalize each word)\n  category = category\n    .split(\"-\")\n    .map(word => word.charAt(0).toUpperCase() + word.slice(1))\n    .join(\" \");\n}\n\nreturn [{ json: { category } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5040,
+        2832
+      ],
+      "id": "3bf78abf-31de-44fb-a282-3fd8a8a47d9b",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "content": "## Canary Media\nnews articles are in this form: \nhttps://www.canarymedia.com/sitemaps-1-section-articles-1-sitemap-p16.xml\n\nnewsletters (which require subscription) are in this form:\nhttps://www.canarymedia.com/sitemaps-1-section-newsletters-1-sitemap-p1.xml",
+        "height": 224,
+        "width": 384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        2752
+      ],
+      "id": "db975076-ca85-4b4d-a01d-4c9531b65b3a",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "content": "### Repeated similar workflows for others news-aggregators",
+        "height": 96,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        2560
+      ],
+      "id": "4201fdb5-2b31-4279-ba58-759ea68dafb0",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        6224,
+        2384
+      ],
+      "id": "3a4bfd9a-965c-453c-a9f1-dc68715db82a",
+      "name": "Wait4",
+      "webhookId": "f5e5e754-5d77-4e36-96ad-69065fc2cb80"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d6c5ac86-6d67-42fb-96ec-9826caf452e2",
+              "name": "sitemapUrl",
+              "type": "string",
+              "value": "https://carboncapturemagazine.com/sitemap.xml"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "33d36bbf-150a-4b05-8e78-e4a924463c68",
+      "name": "Set sitemap URL3",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2480,
+        1808
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urlset.url",
+        "options": {}
+      },
+      "id": "d4606744-3344-4e57-a1c6-ac45b52bca85",
+      "name": "Split Out5",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        3008,
+        1808
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.sitemapUrl }}",
+        "options": {}
+      },
+      "id": "7f198eaf-d8cf-4801-a67e-01e9eac0153e",
+      "name": "Get Sitemap3",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        2656,
+        1808
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "options": {
+          "ignoreAttrs": true,
+          "mergeAttrs": true,
+          "normalize": true,
+          "normalizeTags": true,
+          "trim": true
+        }
+      },
+      "id": "c40f2442-3aa4-4a0c-a3e6-a43aec5b49d8",
+      "name": "Convert Sitemap to JSON3",
+      "type": "n8n-nodes-base.xml",
+      "position": [
+        2832,
+        1808
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "0bf8e98c-b6c5-4129-852c-0d3e63f32f9f",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              },
+              "leftValue": "={{ $json.loc }}",
+              "rightValue": "articles"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "45dc9e1d-2a57-473d-8e27-6d13c4c15fa9",
+      "name": "Filter URLs3",
+      "type": "n8n-nodes-base.filter",
+      "position": [
+        3200,
+        1808
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "content": "**Set your sitemap.xml\nurl here.**",
+        "height": 240,
+        "width": 150,
+        "color": 6
+      },
+      "id": "4e3b5882-1b09-4d0d-a090-6c254a03a7c2",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2448,
+        1728
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Create your filter here.**",
+        "height": 240,
+        "width": 150,
+        "color": 6
+      },
+      "id": "cc965924-8de5-4aa8-9619-d6070d7b9573",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3168,
+        1728
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Fetch and process the sitemap.xml file\nThis part fetches and process the sitemap.xml file from XML data to JSON that we can work with.",
+        "height": 300,
+        "width": 540,
+        "color": 7
+      },
+      "id": "07c442b4-c292-46db-aae4-194b54b3e225",
+      "name": "Sticky Note17",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2608,
+        1696
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Carbon Capture Magazine\n\nThis news-aggregator site does not have any RSS feed, neither is it possible to navigate through pages of articles (go to https://carboncapturemagazine.com/ and click \"articles\" or \"news\", I was not taken to the anticipated page for articles and news respectively).\n\nAs an alternative, I discovered that this site has a sitemap.xml, which is basically a text-based XML file that lists all the important URLs (web pages) on a website, acting as a roadmap for search engine crawlers.\n\nA quick scan allowed me to filter the sitemap to article links only, ignoring general pages like \"about\", \"advertising\", \"newsletter\" etc.\n\nAfter several trial executions, this sitemap has the following features:\n\n1. It's arranged from the oldest to recent articles (hence the 'Analyse last 100 article URLs' node)\n\n2. URLs contain the title of articles, not the publication dates.\n\nChallenges:\nThe HTML extract node does not recognise the CSS selector that represents the main content. I found a JSON-like portion in the article's HTML that contains the attributes of the article. I only took the attributes:\n\n* title\n* publishedAt (pubDate)\n* tags > name (categories/keywords)\n* summary (content snippet)\n* body (contains main content, but with other stylistic features irrelevant to the content)\n\nSet up a scheduled read of the last 30 links of the sitemap that runs every 3 days at midnight. \n\nCarbon Capture Magazine's articles are published quite sparsely rather than on consecutive days. ",
+        "height": 868,
+        "width": 472
+      },
+      "id": "41f2ef7d-7b27-4514-89a8-e2713ece1135",
+      "name": "Sticky Note18",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1776,
+        1648
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3680,
+        1808
+      ],
+      "id": "38bac9a4-6c90-4bd4-8ea1-f94f0db52cfb",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me3",
+      "typeVersion": 1,
+      "position": [
+        5680,
+        1968
+      ],
+      "id": "0d8f178f-3ee0-4d15-b91f-97262e13ca19"
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3904,
+        1824
+      ],
+      "id": "e814e79f-ddfd-4be5-9139-7179c380fc87",
+      "name": "Wait5",
+      "webhookId": "288174a4-4232-4242-9269-7dae1f82c9de"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Loop Over Items3').item.json.loc }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4144,
+        1808
+      ],
+      "id": "97f706bb-cf44-49b1-852b-f4244ffa97cf",
+      "name": "HTTP Request5",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": "h2"
+            },
+            {
+              "key": "pubDate",
+              "cssSelector": "p.chakra-text.css-ah2sm7"
+            },
+            {
+              "key": "content",
+              "cssSelector": "script#__NEXT_DATA__",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        4368,
+        1792
+      ],
+      "id": "40b8b546-89d9-4748-a1ad-9b1d92a2ba34",
+      "name": "HTML3"
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = $input.first().json.content[0];\n\n// Clean up invalid characters (newlines etc.)\nraw = raw.replace(/[\\n\\r\\t]/g, ' ');\n\n// Parse JSON\nconst parsed = JSON.parse(raw);\n\n// Replace <p> and </p> with newlines\nif (parsed.props?.pageProps?.article?.body) {\n  parsed.props.pageProps.article.body = parsed.props.pageProps.article.body\n    .replace(/<p>/g, '\\n')\n    .replace(/<\\/p>/g, '\\n')\n    .replace(/&nbsp;/g, ' ')  // optional: decode non-breaking spaces\n    .trim();\n}\n\nreturn [{\n  json: parsed\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4624,
+        1792
+      ],
+      "id": "17afa986-70e8-44fc-8e05-b630f14f0598",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d8010e48-cb5e-4588-995b-33e7f8b778fe",
+              "leftValue": "={{ $json.props.pageProps.article.publishedAt }}",
+              "rightValue": "2025-06-15T00:00:00",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        4864,
+        1840
+      ],
+      "id": "5c8c6da9-0086-455b-8aa8-ccb0ff9ad954",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f2fe5727-5ae3-40fe-86c5-e2ad6288303b",
+              "operator": {
+                "type": "object",
+                "operation": "empty",
+                "singleValue": true
+              },
+              "leftValue": "={{ $item(\"0\").$node[\"Get row(s) in sheet\"].json }}",
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d8c9abe5-7c3b-4e60-a0ce-384abf71379f",
+      "name": "Check If Article Exists3",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        5264,
+        1888
+      ],
+      "notesInFlow": true,
+      "typeVersion": 2.2,
+      "notes": "We check if the object is empty"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        2288,
+        1936
+      ],
+      "id": "e1b957e6-658d-4a8c-9205-d6bd2497167d",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w",
+          "mode": "list",
+          "cachedResultName": "2. Sitemaps",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Carbon Capture Magazine",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "pubDate": "={{ $json.props.pageProps.article.publishedAt }}",
+            "source": "Carbon Capture Magazine",
+            "title": "={{ $json.props.pageProps.article.title }}",
+            "link": "={{ $('Loop Over Items3').item.json.loc }}",
+            "categories": "={{ $json.props.pageProps.article.tags.map(tag => tag.name).join(', ') }}",
+            "content snippet": "={{ $json.props.pageProps.article.summary }}",
+            "content": "={{ $json.props.pageProps.article.body }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "pubDate",
+              "displayName": "pubDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "categories",
+              "displayName": "categories",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content snippet",
+              "displayName": "content snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        5504,
+        1888
+      ],
+      "id": "023a68f8-34b7-4139-8563-b5fcda429467",
+      "name": "Append row in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WB4WNoXsLpMD79Pz",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w",
+          "mode": "list",
+          "cachedResultName": "2. Sitemaps",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1131404488,
+          "mode": "list",
+          "cachedResultName": "Bioenergy Insight",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/160UbDLEhqUy0xdb4L65oSr_l92TzdQPBCd-QcB1LN6w/edit#gid=1131404488"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "link",
+              "lookupValue": "={{ $('Loop Over Items1').item.json.loc }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        5712,
+        2368
+      ],
+      "id": "58764086-4c84-499f-bf93-e86467e1325d",
+      "name": "Get row(s) in sheet3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "WB4WNoXsLpMD79Pz",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        2240,
+        2272
+      ],
+      "id": "ef7cfb03-eef2-44db-b02c-4bf7dceca39c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all items coming into this node\nconst items = $input.all();\n\n// Slice the array to only the last 20\nconst last20 = items.slice(-20);\n\nreturn last20;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3408,
+        1808
+      ],
+      "id": "34ddf949-6a20-49ca-845b-41d7c5665466",
+      "name": "Analyse last 20 article URLs"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Check If Article Exists3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set sitemap URL1": {
+      "main": [
+        [
+          {
+            "node": "Get Sitemap1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Filter URLs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sitemap1": {
+      "main": [
+        [
+          {
+            "node": "Convert Sitemap to JSON1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Sitemap to JSON1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter URLs1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Article Exists1": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set sitemap URL2": {
+      "main": [
+        [
+          {
+            "node": "Get Sitemap2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Filter URLs2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sitemap2": {
+      "main": [
+        [
+          {
+            "node": "Convert Sitemap to JSON2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Sitemap to JSON2": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter URLs2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "HTML2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML2": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Article Exists2": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Check If Article Exists2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Replace Me2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML1": {
+      "main": [
+        [
+          {
+            "node": "Split Out4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out4": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "XML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set sitemap URL3": {
+      "main": [
+        [
+          {
+            "node": "Get Sitemap3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out5": {
+      "main": [
+        [
+          {
+            "node": "Filter URLs3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sitemap3": {
+      "main": [
+        [
+          {
+            "node": "Convert Sitemap to JSON3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Sitemap to JSON3": {
+      "main": [
+        [
+          {
+            "node": "Split Out5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter URLs3": {
+      "main": [
+        [
+          {
+            "node": "Analyse last 20 article URLs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "HTML3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Article Exists3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Set sitemap URL1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Set sitemap URL3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Replace Me3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Check If Article Exists1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set sitemap URL3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyse last 20 article URLs": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "45c01ed3-36fe-4fb2-982a-9773683b878c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c0995d6d56d8610dafb5446a7b8a8a87ca33595743e57750142488a73c004c71"
+  },
+  "id": "GiQCr7LnPdybE8of",
+  "tags": []
+}
