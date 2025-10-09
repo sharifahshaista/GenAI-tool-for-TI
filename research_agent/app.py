@@ -13,6 +13,9 @@ import json
 from pathlib import Path
 from datetime import datetime
 import logging
+import pandas as pd
+from openai import AzureOpenAI
+from config.azure_model import Settings
 
 # Import existing modules
 from agents.clarification import get_clarifications
@@ -48,6 +51,14 @@ if 'learnings' not in st.session_state:
     st.session_state.learnings = {}
 if 'current_stage' not in st.session_state:
     st.session_state.current_stage = 'input'
+if 'csv_df' not in st.session_state:
+    st.session_state.csv_df = None
+if 'csv_name' not in st.session_state:
+    st.session_state.csv_name = None
+if 'csv_preview_rows' not in st.session_state:
+    st.session_state.csv_preview_rows = 20
+if 'csv_chat_history' not in st.session_state:
+    st.session_state.csv_chat_history = []
 
 
 def reset_session_state():
@@ -188,6 +199,75 @@ def run_learning_extraction_stage(results_collection):
     return learnings_dict
 
 
+@st.cache_resource(show_spinner=False)
+def get_azure_client():
+    """Create and cache Azure OpenAI client from env (.env supported)."""
+    settings = Settings()
+    client = AzureOpenAI(
+        api_key=settings.azure_api_key,
+        api_version=settings.azure_api_version,
+        azure_endpoint=str(settings.azure_endpoint),
+    )
+    return client, settings.model_name
+
+
+def build_csv_context(df: pd.DataFrame, sample_rows: int) -> str:
+    """Build a concise CSV context string for the LLM."""
+    sample_rows = max(1, min(sample_rows, len(df)))
+    preview_csv = df.head(sample_rows).to_csv(index=False)
+    # Limit context size to avoid token bloat
+    if len(preview_csv) > 120_000:
+        preview_csv = preview_csv[:120_000] + "\n... [truncated]"
+    dtypes_str = (df.dtypes.astype(str)
+                  .reset_index()
+                  .rename(columns={"index": "column", 0: "dtype"})
+                  .to_string(index=False))
+    meta = [
+        f"Total rows: {len(df)}",
+        f"Total columns: {len(df.columns)}",
+        f"Columns: {', '.join(map(str, df.columns.tolist()))}",
+        "\nColumn dtypes:\n" + dtypes_str,
+        f"\nPreview (first {sample_rows} rows):\n" + preview_csv,
+    ]
+    return "\n".join(meta)
+
+
+def generate_csv_chat_response(question: str, df: pd.DataFrame, history: list, sample_rows: int) -> str:
+    """Call Azure OpenAI to answer a question about the uploaded CSV."""
+    client, deployment = get_azure_client()
+
+    system_instructions = (
+        "You are a helpful data analyst. Answer questions using only the provided CSV context. "
+        "If the preview may be insufficient for an exact calculation, clearly state that your answer "
+        "is based on the preview and outline Pandas code the user could run locally to compute "
+        "the precise value over the full dataset. Prefer concise answers, tables, and bullet points."
+    )
+
+    csv_context = build_csv_context(df, sample_rows)
+
+    messages = [{"role": "system", "content": system_instructions},
+                {"role": "user", "content": "CSV Context:\n" + csv_context}]
+
+    # Append recent chat history (limit to last 8 turns to keep prompt short)
+    for msg in history[-16:]:
+        role = msg.get("role", "user")
+        content = msg.get("content", "")
+        if content:
+            messages.append({"role": role, "content": content})
+
+    messages.append({"role": "user", "content": question})
+
+    try:
+        resp = client.chat.completions.create(
+            model=deployment,
+            messages=messages,
+            temperature=0.2,
+        )
+        return resp.choices[0].message.content
+    except Exception as e:
+        return f"Error generating response: {e}"
+
+
 def save_search_results(results_collection, filename):
     """Save search results to JSON file"""
     path = Path("data")
@@ -235,7 +315,7 @@ st.markdown("AI-powered research with clarification, SERP generation, web search
 st.sidebar.header("Navigation")
 page = st.sidebar.radio(
     "Select Mode",
-    ["Research Pipeline", "Learning Extraction", "About"],
+    ["Research Pipeline", "Learning Extraction", "CSV + Chatbot", "About"],
     label_visibility="collapsed"
 )
 
@@ -546,6 +626,95 @@ elif page == "Learning Extraction":
                     st.error(f"Error saving learnings: {e}")
             else:
                 st.warning("No learnings extracted")
+
+# CSV + Chatbot Page
+elif page == "CSV + Chatbot":
+    st.header("CSV + Chatbot")
+    st.markdown("Upload a CSV and chat with an AI about its contents. The chat uses the CSV preview as context.")
+
+    left_col, right_col = st.columns([1, 1])
+
+    with left_col:
+        st.subheader("CSV Data")
+        uploaded_csv = st.file_uploader("Upload CSV file", type=["csv"], accept_multiple_files=False)
+
+        if uploaded_csv is not None:
+            try:
+                df = pd.read_csv(uploaded_csv)
+                st.session_state.csv_df = df
+                st.session_state.csv_name = uploaded_csv.name
+                st.success(f"Loaded '{uploaded_csv.name}' with shape {df.shape}")
+            except Exception as e:
+                st.error(f"Failed to read CSV: {e}")
+
+        if st.session_state.csv_df is not None:
+            df = st.session_state.csv_df
+            col_a, col_b = st.columns(2)
+            with col_a:
+                st.metric("Rows", len(df))
+            with col_b:
+                st.metric("Columns", len(df.columns))
+
+            st.session_state.csv_preview_rows = st.slider(
+                "Preview rows",
+                min_value=5,
+                max_value=int(min(500, max(5, len(df)))) ,
+                value=int(min(st.session_state.csv_preview_rows, max(5, len(df)))),
+                step=5,
+                help="Controls both the on-screen preview and the chat context sample size."
+            )
+
+            st.dataframe(
+                df.head(st.session_state.csv_preview_rows),
+                use_container_width=True,
+            )
+
+            with st.expander("Columns"):
+                st.write(list(map(str, df.columns.tolist())))
+
+            if st.button("Clear CSV"):
+                st.session_state.csv_df = None
+                st.session_state.csv_name = None
+                st.session_state.csv_chat_history = []
+                st.rerun()
+        else:
+            st.info("Upload a CSV to preview it.")
+
+    with right_col:
+        st.subheader("Chatbot")
+        if st.session_state.csv_df is None:
+            st.info("Upload a CSV in the left panel to start chatting.")
+        else:
+            # Render previous conversation
+            for msg in st.session_state.csv_chat_history:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
+
+            user_input = st.chat_input("Ask a question about the CSV...")
+
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                if st.button("Clear chat"):
+                    st.session_state.csv_chat_history = []
+                    st.rerun()
+            with col2:
+                st.caption(f"Context rows: {st.session_state.csv_preview_rows}")
+
+            if user_input:
+                st.session_state.csv_chat_history.append({"role": "user", "content": user_input})
+                with st.chat_message("user"):
+                    st.markdown(user_input)
+
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking..."):
+                        reply = generate_csv_chat_response(
+                            question=user_input,
+                            df=st.session_state.csv_df,
+                            history=st.session_state.csv_chat_history,
+                            sample_rows=st.session_state.csv_preview_rows,
+                        )
+                        st.markdown(reply)
+                st.session_state.csv_chat_history.append({"role": "assistant", "content": reply})
 
 # About Page
 elif page == "About":
