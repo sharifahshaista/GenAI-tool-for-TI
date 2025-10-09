@@ -59,6 +59,14 @@ if 'csv_preview_rows' not in st.session_state:
     st.session_state.csv_preview_rows = 20
 if 'csv_chat_history' not in st.session_state:
     st.session_state.csv_chat_history = []
+if 'csv_files' not in st.session_state:
+    st.session_state.csv_files = {}
+if 'csv_selected_name' not in st.session_state:
+    st.session_state.csv_selected_name = None
+if 'csv_chat_histories' not in st.session_state:
+    st.session_state.csv_chat_histories = {}
+if 'csv_context_rows' not in st.session_state:
+    st.session_state.csv_context_rows = {}
 
 
 def reset_session_state():
@@ -68,6 +76,15 @@ def reset_session_state():
     st.session_state.search_results = None
     st.session_state.learnings = {}
     st.session_state.current_stage = 'input'
+    # CSV-related state
+    st.session_state.csv_df = None
+    st.session_state.csv_name = None
+    st.session_state.csv_preview_rows = 20
+    st.session_state.csv_chat_history = []
+    st.session_state.csv_files = {}
+    st.session_state.csv_selected_name = None
+    st.session_state.csv_chat_histories = {}
+    st.session_state.csv_context_rows = {}
 
 
 # Helper function to run async code in Streamlit
@@ -627,81 +644,125 @@ elif page == "Learning Extraction":
             else:
                 st.warning("No learnings extracted")
 
-# CSV + Chatbot Page
+// CSV + Chatbot Page
 elif page == "CSV + Chatbot":
     st.header("CSV + Chatbot")
-    st.markdown("Upload a CSV and chat with an AI about its contents. The chat uses the CSV preview as context.")
+    st.markdown("Upload one or more CSVs, view the full table, and chat about the selected file. The chat uses a sampled context from the selected CSV.")
 
     left_col, right_col = st.columns([1, 1])
 
     with left_col:
-        st.subheader("CSV Data")
-        uploaded_csv = st.file_uploader("Upload CSV file", type=["csv"], accept_multiple_files=False)
+        st.subheader("CSV Files")
+        uploaded_csvs = st.file_uploader(
+            "Upload CSV file(s)",
+            type=["csv"],
+            accept_multiple_files=True,
+            help="You can upload multiple CSV files and then choose one to view."
+        )
 
-        if uploaded_csv is not None:
-            try:
-                df = pd.read_csv(uploaded_csv)
-                st.session_state.csv_df = df
-                st.session_state.csv_name = uploaded_csv.name
-                st.success(f"Loaded '{uploaded_csv.name}' with shape {df.shape}")
-            except Exception as e:
-                st.error(f"Failed to read CSV: {e}")
+        if uploaded_csvs:
+            for uploaded in uploaded_csvs:
+                try:
+                    df_new = pd.read_csv(uploaded)
+                    st.session_state.csv_files[uploaded.name] = df_new
+                    # Initialize per-file chat/context if not present
+                    st.session_state.csv_chat_histories.setdefault(uploaded.name, [])
+                    st.session_state.csv_context_rows.setdefault(uploaded.name, min(200, len(df_new)))
+                    if st.session_state.csv_selected_name is None:
+                        st.session_state.csv_selected_name = uploaded.name
+                except Exception as e:
+                    st.error(f"Failed to read {uploaded.name}: {e}")
 
-        if st.session_state.csv_df is not None:
-            df = st.session_state.csv_df
+        if st.session_state.csv_files:
+            names = sorted(st.session_state.csv_files.keys())
+            # Ensure selected exists
+            if st.session_state.csv_selected_name not in names:
+                st.session_state.csv_selected_name = names[0]
+
+            selected = st.selectbox(
+                "Select a file to view",
+                options=names,
+                index=names.index(st.session_state.csv_selected_name) if st.session_state.csv_selected_name in names else 0,
+            )
+            if selected != st.session_state.csv_selected_name:
+                st.session_state.csv_selected_name = selected
+
+            df_sel = st.session_state.csv_files[selected]
             col_a, col_b = st.columns(2)
             with col_a:
-                st.metric("Rows", len(df))
+                st.metric("Rows", len(df_sel))
             with col_b:
-                st.metric("Columns", len(df.columns))
+                st.metric("Columns", len(df_sel.columns))
 
-            st.session_state.csv_preview_rows = st.slider(
-                "Preview rows",
-                min_value=5,
-                max_value=int(min(500, max(5, len(df)))) ,
-                value=int(min(st.session_state.csv_preview_rows, max(5, len(df)))),
-                step=5,
-                help="Controls both the on-screen preview and the chat context sample size."
-            )
-
-            st.dataframe(
-                df.head(st.session_state.csv_preview_rows),
-                use_container_width=True,
-            )
+            # Full table (virtualized) for user access
+            st.dataframe(df_sel, use_container_width=True, height=520)
 
             with st.expander("Columns"):
-                st.write(list(map(str, df.columns.tolist())))
+                st.write(list(map(str, df_sel.columns.tolist())))
 
-            if st.button("Clear CSV"):
-                st.session_state.csv_df = None
-                st.session_state.csv_name = None
-                st.session_state.csv_chat_history = []
-                st.rerun()
+            c1, c2 = st.columns(2)
+            with c1:
+                if st.button("Remove selected file"):
+                    try:
+                        del st.session_state.csv_files[selected]
+                    except KeyError:
+                        pass
+                    st.session_state.csv_chat_histories.pop(selected, None)
+                    st.session_state.csv_context_rows.pop(selected, None)
+                    # Choose another file if available
+                    if st.session_state.csv_files:
+                        st.session_state.csv_selected_name = sorted(st.session_state.csv_files.keys())[0]
+                    else:
+                        st.session_state.csv_selected_name = None
+                    st.rerun()
+            with c2:
+                if st.button("Clear all files"):
+                    st.session_state.csv_files = {}
+                    st.session_state.csv_chat_histories = {}
+                    st.session_state.csv_context_rows = {}
+                    st.session_state.csv_selected_name = None
+                    st.rerun()
         else:
-            st.info("Upload a CSV to preview it.")
+            st.info("Upload one or more CSV files to get started.")
 
     with right_col:
         st.subheader("Chatbot")
-        if st.session_state.csv_df is None:
-            st.info("Upload a CSV in the left panel to start chatting.")
+        selected = st.session_state.csv_selected_name
+        if not selected or selected not in st.session_state.csv_files:
+            st.info("Select a CSV on the left to start chatting.")
         else:
-            # Render previous conversation
-            for msg in st.session_state.csv_chat_history:
+            df_sel = st.session_state.csv_files[selected]
+            # Per-file context rows (for chat prompt only)
+            default_rows = st.session_state.csv_context_rows.get(selected, min(200, len(df_sel)))
+            st.session_state.csv_context_rows[selected] = st.slider(
+                "Context rows for chat",
+                min_value=10,
+                max_value=int(min(1000, max(10, len(df_sel)))),
+                value=int(default_rows),
+                step=10,
+                help="Controls how many top rows are summarized into the chat context. Table view remains full.",
+                key=f"context_rows_{selected}"
+            )
+
+            # Render previous conversation for selected file
+            history = st.session_state.csv_chat_histories.get(selected, [])
+            for msg in history:
                 with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
 
-            user_input = st.chat_input("Ask a question about the CSV...")
+            user_input = st.chat_input(f"Ask a question about '{selected}'...")
 
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                if st.button("Clear chat"):
-                    st.session_state.csv_chat_history = []
+            cc1, cc2 = st.columns([1, 1])
+            with cc1:
+                if st.button("Clear chat", key=f"clear_chat_{selected}"):
+                    st.session_state.csv_chat_histories[selected] = []
                     st.rerun()
-            with col2:
-                st.caption(f"Context rows: {st.session_state.csv_preview_rows}")
+            with cc2:
+                st.caption(f"Context rows: {st.session_state.csv_context_rows[selected]}")
 
             if user_input:
-                st.session_state.csv_chat_history.append({"role": "user", "content": user_input})
+                history.append({"role": "user", "content": user_input})
+                st.session_state.csv_chat_histories[selected] = history
                 with st.chat_message("user"):
                     st.markdown(user_input)
 
@@ -709,12 +770,13 @@ elif page == "CSV + Chatbot":
                     with st.spinner("Thinking..."):
                         reply = generate_csv_chat_response(
                             question=user_input,
-                            df=st.session_state.csv_df,
-                            history=st.session_state.csv_chat_history,
-                            sample_rows=st.session_state.csv_preview_rows,
+                            df=df_sel,
+                            history=history,
+                            sample_rows=st.session_state.csv_context_rows[selected],
                         )
                         st.markdown(reply)
-                st.session_state.csv_chat_history.append({"role": "assistant", "content": reply})
+                history.append({"role": "assistant", "content": reply})
+                st.session_state.csv_chat_histories[selected] = history
 
 # About Page
 elif page == "About":
