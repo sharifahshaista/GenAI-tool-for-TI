@@ -1,0 +1,57 @@
+[
+    {
+        "source_file": "coolcoalition.csv",
+        "total_rows": 55,
+        "successful": 55,
+        "failed": 0,
+        "duration_seconds": 129.2944939136505,
+        "timestamp": "2025-10-12T01:21:33.150478",
+        "content_column": "content",
+        "output_csv_path": "summarised_content/coolcoalition_summarized_20251012_012133.csv",
+        "output_log_path": "summarised_content/coolcoalition_log_20251012_012133.txt"
+    },
+    {
+        "source_file": "carboncapture.csv",
+        "total_rows": 130,
+        "successful": 130,
+        "failed": 0,
+        "duration_seconds": 296.5216691493988,
+        "timestamp": "2025-10-12T01:32:01.080732",
+        "content_column": "content",
+        "output_csv_path": "summarised_content/carboncapture_summarized_20251012_013201.csv",
+        "output_log_path": "summarised_content/carboncapture_log_20251012_013201.txt"
+    },
+    {
+        "source_file": "RSS_feeds.csv",
+        "total_rows": 1853,
+        "successful": 1778,
+        "failed": 75,
+        "duration_seconds": 3771.733151912689,
+        "timestamp": "2025-10-12T02:50:56.345099",
+        "content_column": "content",
+        "output_csv_path": "summarised_content/RSS_feeds_summarized_20251012_025056.csv",
+        "output_log_path": "summarised_content/RSS_feeds_log_20251012_025056.txt"
+    },
+    {
+        "source_file": "thinkgeoenergy.csv",
+        "total_rows": 456,
+        "successful": 456,
+        "failed": 0,
+        "duration_seconds": 1003.0419738292694,
+        "timestamp": "2025-10-13T15:08:42.700671",
+        "content_column": "content",
+        "output_csv_path": "summarised_content/thinkgeoenergy_summarized_20251013_150842.csv",
+        "output_log_path": "summarised_content/thinkgeoenergy_log_20251013_150842.txt"
+    },
+    {
+        "source_file": "canary_media.csv",
+        "total_rows": 199,
+        "successful": 199,
+        "failed": 0,
+        "duration_seconds": 432.1334617137909,
+        "timestamp": "2025-10-13T15:32:23.299602",
+        "content_column": "content",
+        "output_csv_path": "summarised_content/canary_media_summarized_20251013_153223.csv",
+        "output_log_path": "summarised_content/canary_media_log_20251013_153223.txt"
+    }
+]
